@@ -4,6 +4,15 @@
 #include <algorithm>
 #include <ctime>
 
+
+//Данную магию подсмотрел на киберфоруме
+//Предназначена для отображения мастей
+#define SPADE   "\x06"
+#define CLUB    "\x05"
+#define HEART   "\x03"
+#define DIAMOND "\x04"
+
+
 using namespace std;
 
 class Card
@@ -136,7 +145,7 @@ bool GenericPlayer::IsBusted() const
 }
 void GenericPlayer::Bust() const
 {
-    cout << m_Name << " busts.\n";
+    cout << m_Name << " перебор.\n";
 }
 
 class Player : public GenericPlayer
@@ -156,7 +165,7 @@ Player::~Player() {}
 
 bool Player::IsHitting() const
 {
-    cout << m_Name << ", do you want a hit? (Y/N): ";
+    cout << m_Name << ", берем карту? (Y/N): ";
     char response;
     cin >> response;
     return (response == 'y' || response == 'Y');
@@ -164,17 +173,17 @@ bool Player::IsHitting() const
 
 void Player::Win() const
 {
-    cout << m_Name << " wins.\n";
+    cout << m_Name << " победил.\n";
 }
 
 void Player::Lose() const
 {
-    cout << m_Name << " loses.\n";
+    cout << m_Name << " проиграл.\n";
 }
 
 void Player::Push() const
 {
-    cout << m_Name << " pushes.\n";
+    cout << m_Name << " ничья.\n";
 }
 
 class House : public GenericPlayer
@@ -200,7 +209,7 @@ void House::FlipFirstCard()
         m_Cards[0]->Flip();
 
     else
-        cout << "No card to flip!\n";
+        cout << "Нет карт для переворачивания!\n";
 }
 
 class Deck : public Hand
@@ -248,7 +257,7 @@ void Deck::Deal(Hand& aHand)
 
     else
     {
-        cout << "Out of cards, Unable to deal.\n";
+        cout << "Карты кончились, сдавать нечего.\n";
     }
 }
 
@@ -292,6 +301,22 @@ Game::Game(const vector<string>& names)
 }
 
 Game::~Game() {}
+
+void Instructions()
+{
+    cout << "\tЦель: Достичь 21 очков, не превысив их.\n\n";
+    cout << "\tHouse (компьютер) будет играть против Вас.\n\n";
+    cout << "\tЕсли у House будет перебор, все игроки, у которых\n";
+    cout << "\tне будет перебора, выигрывают.\n\n";
+    cout << "\tЕсли the House не будет перебора, то победят игроки,\n";
+    cout << "\tу кого не будет перебора и при этом \n";
+    cout << "\tих количество очков больше чем у House\n\n";
+    cout << "\tЕсли игрок набрал 21, а House нет,\n";
+    cout << "\tто игрок победил\n\n";
+    cout << "\tЕсли игрок и House оба набрали 21,\n";
+    cout << "\tобъявляется ничья.\n\n";
+    cout << "\tИграть могут до 7 игроков.\n\n";
+}
 
 void Game::Play()
 {
@@ -347,18 +372,20 @@ ostream& operator<<(ostream& os, const GenericPlayer& aGenericPlayer);
 
 int main()
 {
+    setlocale(LC_ALL, "rus");
     cout << "\t\tWelcome to Blackjack!\n\n";
+    Instructions();
     int numPlayers = 0;
     while (numPlayers < 1 || numPlayers > 7)
     {
-        cout << "How many players? (1 - 7): ";
+        cout << "Сколько будет игроков? (1 - 7): ";
         cin >> numPlayers;
     }
     vector <string> names;
     string name;
     for (int i = 0; i < numPlayers; ++i)
     {
-        cout << "Enter player name: ";
+        cout << "Введите имя игрока (на английском): ";
         cin >> name;
         names.push_back(name);
     }
@@ -368,7 +395,7 @@ int main()
     while (again != 'n' && again != 'N')
     {
         aGame.Play();
-        cout << "\nDo you want to play again? (Y/N): ";
+        cout << "\nХотите снова сыграть? (Y/N): ";
         cin >> again;
     }
 
@@ -380,7 +407,7 @@ ostream& operator<<(ostream& os, const Card& aCard)
     const string RANKS[] = { "0", "A", "2", "3", "4", "5", "6", "7", "8", "9",
                              "10", "J", "Q", "K" };
 
-    const string SUITS[] = { "c", "d", "h", "s" };
+    const string SUITS[] = { "\x06", "\x05", "\x04", "\x03" };
 
     if (aCard.m_IsFaceUp)
         os << RANKS[aCard.m_Rank] << SUITS[aCard.m_Suit];
