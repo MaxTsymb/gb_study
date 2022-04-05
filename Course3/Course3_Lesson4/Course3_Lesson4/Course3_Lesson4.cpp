@@ -74,7 +74,7 @@ int main() {
     std::cout << "TASK 1" << std::endl;
     Task1();
     std::cout << std::endl;
-    std::cout << "TASK 1" << std::endl;
+    std::cout << "TASK 2" << std::endl;
     Task2();
     return 0;
 }
